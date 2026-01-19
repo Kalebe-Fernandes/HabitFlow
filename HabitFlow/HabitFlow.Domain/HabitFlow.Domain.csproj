@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Gamification\Events\" />
+    <Folder Include="Goals\Events\" />
+    <Folder Include="Habits\Events\" />
+    <Folder Include="Habits\ValueObjects\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Common\" />
+    <Folder Include="Users\Events\" />
+  </ItemGroup>
+
+</Project>

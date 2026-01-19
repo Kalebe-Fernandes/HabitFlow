@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Models\" />
+    <Folder Include="Common\Mappings\" />
+    <Folder Include="Common\Interfaces\" />
+    <Folder Include="Common\Behaviors\" />
+    <Folder Include="Features\Gamification\Commands\" />
+    <Folder Include="Features\Gamification\Queries\" />
+    <Folder Include="Features\Goals\Commands\" />
+    <Folder Include="Features\Goals\Queries\" />
+    <Folder Include="Features\Habits\Commands\CompleteHabit\" />
+    <Folder Include="Features\Habits\Commands\CreateHabit\" />
+    <Folder Include="Features\Habits\Queries\GetHabits\" />
+    <Folder Include="Features\Users\Commands\Login\" />
+    <Folder Include="Features\Users\Commands\Register\" />
+    <Folder Include="Features\Users\Queries\GetProfile\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="MediatR" Version="14.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HabitFlow.Contracts\HabitFlow.Contracts.csproj" />
+    <ProjectReference Include="..\HabitFlow.Domain\HabitFlow.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
