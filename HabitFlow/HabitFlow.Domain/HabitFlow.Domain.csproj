@@ -6,14 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Gamification\Events\" />
-    <Folder Include="Goals\Events\" />
-    <Folder Include="Habits\Events\" />
-    <Folder Include="Habits\ValueObjects\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Common\" />
-    <Folder Include="Users\Events\" />
-  </ItemGroup>
-
 </Project>
