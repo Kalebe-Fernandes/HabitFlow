@@ -7,13 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Models\" />
     <Folder Include="Common\Mappings\" />
-    <Folder Include="Common\Interfaces\" />
-    <Folder Include="Common\Behaviors\" />
-    <Folder Include="Features\Gamification\Commands\" />
-    <Folder Include="Features\Gamification\Queries\" />
-    <Folder Include="Features\Goals\Commands\" />
     <Folder Include="Features\Goals\Queries\" />
     <Folder Include="Features\Habits\Commands\CompleteHabit\" />
     <Folder Include="Features\Habits\Commands\CreateHabit\" />

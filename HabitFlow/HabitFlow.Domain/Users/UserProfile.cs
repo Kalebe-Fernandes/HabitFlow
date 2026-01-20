@@ -8,6 +8,8 @@ namespace HabitFlow.Domain.Users
         public DateTime? DateOfBirth { get; private set; }
         public string Timezone { get; private set; } = "America/Sao_Paulo";
         public string Language { get; private set; } = "pt-BR";
+        public string? AvatarUrl { get; set; }
+
         private UserProfile() { }
         public static UserProfile CreateDefault() => new UserProfile();
         public static UserProfile Create(string? bio, DateTime? dateOfBirth, string timezone, string language)

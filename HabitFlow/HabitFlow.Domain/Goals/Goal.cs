@@ -18,9 +18,11 @@ namespace HabitFlow.Domain.Goals
         public GoalStatus Status { get; private set; }
         public IReadOnlyCollection<GoalHabit> GoalHabits => _goalHabits.AsReadOnly();
 
+        public decimal ProgressPercentage { get; set; }
+
         private Goal() { }
 
-        public static Goal Create(Guid userId, string name, decimal targetValue, string targetUnit, DateTime startDate, DateTime targetDate)
+        public static Goal Create(Guid userId, string name, string description, decimal targetValue, string targetUnit, DateTime startDate, DateTime targetDate)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ValidationException(nameof(name), "Goal name is required");
             if (targetValue <= 0) throw new ValidationException(nameof(targetValue), "Target value must be positive");
@@ -31,6 +33,7 @@ namespace HabitFlow.Domain.Goals
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 Name = name.Trim(),
+                Description = description,
                 TargetValue = targetValue,
                 TargetUnit = targetUnit.Trim(),
                 CurrentValue = 0,

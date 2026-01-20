@@ -63,6 +63,12 @@ namespace HabitFlow.Domain.Users
             if (string.IsNullOrWhiteSpace(email)) throw new ValidationException(nameof(email), "Email is required");
             if (string.IsNullOrWhiteSpace(firstName)) throw new ValidationException(nameof(firstName), "First name is required");
             if (string.IsNullOrWhiteSpace(lastName)) throw new ValidationException(nameof(lastName), "Last name is required");
+            if (!VerifyPassword(passwordHash)) throw new ValidationException(nameof(firstName), "Password is not satisfied");
+        }
+
+        public static bool VerifyPassword(string password)
+        {
+            return password != null && password.Length > 8 && password.Length < 100;
         }
     }
 }
