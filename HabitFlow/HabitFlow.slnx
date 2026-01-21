@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/docs/" />
+  <Folder Name="/src/">
+    <Project Path="HabitFlow.API/HabitFlow.API.csproj" />
+    <Project Path="HabitFlow.Aplicacao/HabitFlow.Aplicacao.csproj" />
+    <Project Path="HabitFlow.Apresentacao/HabitFlow.Apresentacao.csproj">
+      <Deploy Solution="Debug|*" />
+    </Project>
+    <Project Path="HabitFlow.Contracts/HabitFlow.Contracts.csproj" />
+    <Project Path="HabitFlow.Domain/HabitFlow.Domain.csproj" />
+    <Project Path="HabitFlow.Infrastructure/HabitFlow.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="HabitFlow.IntegrationTests/HabitFlow.IntegrationTests.csproj" />
+    <Project Path="HabitFlow.UnitTests/HabitFlow.UnitTests.csproj" />
+  </Folder>
+</Solution>
