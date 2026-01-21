@@ -7,16 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="BackgroundJobs\" />
-    <Folder Include="Data\Configurations\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\Notifications\" />
-    <Folder Include="Services\Cache\" />
-    <Folder Include="Services\Storage\" />
-    <Folder Include="Services\Email\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,6 +16,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
