@@ -211,6 +211,30 @@ namespace HabitFlow.Domain.Habits
         }
 
         /// <summary>
+        /// Updates the habit information.
+        /// </summary>
+        public void Update(string name, string? description, string? iconName, string? colorHex)
+        {
+            Name = name;
+            UpdatedAt = DateTime.UtcNow;
+
+            if (description is not null)
+            {
+                Description = description;
+            }
+
+            if (iconName is not null)
+            {
+                IconName = iconName;
+            }
+
+            if (colorHex is not null)
+            {
+                ColorHex = colorHex;
+            }
+        }
+
+        /// <summary>
         /// Archives the habit.
         /// </summary>
         public void Archive()

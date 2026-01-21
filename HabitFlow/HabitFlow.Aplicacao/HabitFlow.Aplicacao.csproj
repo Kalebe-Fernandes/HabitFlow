@@ -7,20 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Mappings\" />
-    <Folder Include="Features\Goals\Queries\" />
-    <Folder Include="Features\Habits\Commands\CompleteHabit\" />
-    <Folder Include="Features\Habits\Commands\CreateHabit\" />
-    <Folder Include="Features\Habits\Queries\GetHabits\" />
-    <Folder Include="Features\Users\Commands\Login\" />
-    <Folder Include="Features\Users\Commands\Register\" />
-    <Folder Include="Features\Users\Queries\GetProfile\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>

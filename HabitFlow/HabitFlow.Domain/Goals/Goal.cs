@@ -52,6 +52,13 @@ namespace HabitFlow.Domain.Goals
             _goalHabits.Add(new GoalHabit { GoalId = Id, HabitId = habitId, ContributionWeight = contributionWeight });
         }
 
+        public void AddHabit(GoalHabit goalHabit)
+        {
+            if (_goalHabits.Any(gh => gh.HabitId == goalHabit.HabitId)) return;
+            _goalHabits.Add(goalHabit);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
         public void UpdateProgress(decimal newValue)
         {
             CurrentValue = newValue;
