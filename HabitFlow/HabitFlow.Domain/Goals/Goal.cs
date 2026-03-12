@@ -7,6 +7,7 @@ namespace HabitFlow.Domain.Goals
     public sealed class Goal : AggregateRoot<Guid>
     {
         private readonly List<GoalHabit> _goalHabits = [];
+
         public Guid UserId { get; private set; }
         public string Name { get; private set; } = string.Empty;
         public string? Description { get; private set; }
@@ -16,17 +17,36 @@ namespace HabitFlow.Domain.Goals
         public DateTime StartDate { get; private set; }
         public DateTime TargetDate { get; private set; }
         public GoalStatus Status { get; private set; }
+
         public IReadOnlyCollection<GoalHabit> GoalHabits => _goalHabits.AsReadOnly();
 
-        public decimal ProgressPercentage { get; set; }
+        /// <summary>
+        /// Percentage of the target achieved. Derived from CurrentValue and TargetValue.
+        /// Capped at 100 % to represent a completed goal.
+        /// </summary>
+        public decimal ProgressPercentage => TargetValue > 0
+            ? Math.Min(100m, CurrentValue / TargetValue * 100m)
+            : 0m;
 
         private Goal() { }
 
-        public static Goal Create(Guid userId, string name, string description, decimal targetValue, string targetUnit, DateTime startDate, DateTime targetDate)
+        public static Goal Create(
+            Guid userId,
+            string name,
+            string? description,
+            decimal targetValue,
+            string targetUnit,
+            DateTime startDate,
+            DateTime targetDate)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new ValidationException(nameof(name), "Goal name is required");
-            if (targetValue <= 0) throw new ValidationException(nameof(targetValue), "Target value must be positive");
-            if (targetDate <= startDate) throw new ValidationException(nameof(targetDate), "Target date must be after start date");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ValidationException(nameof(name), "Goal name is required");
+
+            if (targetValue <= 0)
+                throw new ValidationException(nameof(targetValue), "Target value must be positive");
+
+            if (targetDate <= startDate)
+                throw new ValidationException(nameof(targetDate), "Target date must be after start date");
 
             var goal = new Goal
             {
@@ -62,7 +82,10 @@ namespace HabitFlow.Domain.Goals
         public void UpdateProgress(decimal newValue)
         {
             CurrentValue = newValue;
-            if (CurrentValue >= TargetValue) Status = GoalStatus.Completed;
+
+            if (CurrentValue >= TargetValue)
+                Status = GoalStatus.Completed;
+
             UpdatedAt = DateTime.UtcNow;
             AddDomainEvent(new GoalProgressUpdatedEvent(Id, UserId, CurrentValue, TargetValue));
         }

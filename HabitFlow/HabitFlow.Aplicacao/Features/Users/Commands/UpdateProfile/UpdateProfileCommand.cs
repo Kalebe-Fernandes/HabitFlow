@@ -7,4 +7,6 @@ namespace HabitFlow.Aplicacao.Features.Users.Commands.UpdateProfile
     string? FirstName,
     string? LastName,
     string? DisplayName) : ICommand;
+
+    public record UpdateProfileRequest(string FirstName, string LastName, string DisplayName);
 }

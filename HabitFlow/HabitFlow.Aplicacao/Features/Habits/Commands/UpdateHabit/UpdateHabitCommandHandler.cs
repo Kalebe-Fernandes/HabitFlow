@@ -15,18 +15,13 @@ namespace HabitFlow.Aplicacao.Features.Habits.Commands.UpdateHabit
             var habit = await _habitRepository.GetByIdAsync(request.HabitId, cancellationToken);
 
             if (habit is null)
-            {
-                return Result.Failure("Hábito não encontrado");
-            }
+                return Result.Failure("Habit not found");
 
             if (habit.UserId != request.UserId)
-            {
-                return Result.Failure("Não autorizado");
-            }
+                return Result.Failure("Unauthorized");
 
-            // Atualiza propriedades diretamente (EF Core change tracking)
-            // Opção alternativa: implementar método Update() no aggregate
-            habit.Update(request.Name, request.Description, request.IconName, request.ColorHex);
+            habit.UpdateDetails(request.Name, request.Description, request.IconName, request.ColorHex);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

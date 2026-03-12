@@ -1,5 +1,5 @@
 ﻿using HabitFlow.Infrastructure.Data;
-using HabitFlow.Infrastructure.EventHandlers;
+using HabitFlow.Infrastructure.Services.Notifications;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -36,11 +36,11 @@ namespace HabitFlow.Infrastructure.BackgroundJobs
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
-            var now = DateTime.UtcNow;
-            var currentHour = now.Hour;
+            var currentHour = DateTime.UtcNow.Hour;
 
             _logger.LogDebug("Processing reminders for hour {Hour}", currentHour);
-            // TODO: Implement reminder logic when Notification entity is added
+            // TODO: Implement reminder logic using Notification entity (Sprint 5)
+            await Task.CompletedTask;
         }
     }
 }

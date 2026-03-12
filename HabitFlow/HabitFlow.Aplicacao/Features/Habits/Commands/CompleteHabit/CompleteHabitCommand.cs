@@ -12,5 +12,16 @@ namespace HabitFlow.Aplicacao.Features.Habits.Commands.CompleteHabit
             int? EnergyLevel
         ) : ICommand<CompleteHabitResponse>;
 
-    public record CompleteHabitResponse(Guid CompletionId, int CurrentStreak, int XPAwarded);
+    /// <summary>
+    /// CompletionId is long because HabitCompletion uses Entity&lt;long&gt;
+    /// with a database-generated IDENTITY value.
+    /// </summary>
+    public record CompleteHabitResponse(long CompletionId, int CurrentStreak, int XPAwarded);
+
+    public record CompleteHabitRequest(
+            DateTime CompletionDate,
+            decimal? CompletedValue,
+            string? Notes,
+            int? MoodLevel,
+            int? EnergyLevel);
 }

@@ -19,4 +19,18 @@ namespace HabitFlow.Aplicacao.Features.Habits.Commands.CreateHabit
         ) : ICommand<CreateHabitResponse>;
 
     public record CreateHabitResponse(Guid HabitId, string Name);
+
+    public record CreateHabitRequest(
+            string Name,
+            string? Description,
+            string IconName,
+            string ColorHex,
+            string FrequencyType,
+            string TargetType,
+            decimal? TargetValue,
+            string? TargetUnit,
+            int? DaysOfWeekFrequency,
+            DateTime? StartDate,
+            DateTime? EndDate,
+            int? CategoryId);
 }

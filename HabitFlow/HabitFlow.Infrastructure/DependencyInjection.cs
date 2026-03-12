@@ -19,7 +19,7 @@ namespace HabitFlow.Infrastructure
     /// </summary>
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
         {
             // Database
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -34,7 +34,6 @@ namespace HabitFlow.Infrastructure
                     sqlOptions.CommandTimeout(30);
                 });
 
-                // Enable detailed errors only in development
                 if (configuration.GetValue<bool>("DetailedErrors"))
                 {
                     options.EnableDetailedErrors();
@@ -50,18 +49,21 @@ namespace HabitFlow.Infrastructure
             services.AddScoped<IHabitRepository, HabitRepository>();
             services.AddScoped<IGoalRepository, GoalRepository>();
             services.AddScoped<IUserLevelRepository, UserLevelRepository>();
+            services.AddScoped<IBadgeRepository, BadgeRepository>();
 
-            // External Services
+            // Authentication - interface defined in Application layer, implemented in Infrastructure
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+            // External services (mock implementations for V1)
             services.AddScoped<IEmailService, MockEmailService>();
             services.AddScoped<IStorageService, MockStorageService>();
             services.AddScoped<INotificationService, MockNotificationService>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             // Cache
             services.AddMemoryCache();
             services.AddScoped<ICacheService, MemoryCacheService>();
 
-            // Background Jobs
+            // Background jobs
             services.AddHostedService<HabitReminderJob>();
             services.AddHostedService<BadgeEvaluationJob>();
             services.AddHostedService<DailyMetricsAggregationJob>();

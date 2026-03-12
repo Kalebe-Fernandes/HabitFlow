@@ -16,24 +16,28 @@ namespace HabitFlow.Aplicacao.Features.Habits.Commands.CompleteHabit
             if (habit is null) return Result.Failure<CompleteHabitResponse>("Habit not found");
             if (habit.UserId != request.UserId) return Result.Failure<CompleteHabitResponse>("Unauthorized");
 
-            // Complete habit (domain logic handles streak calculation)
+            var completionDate = DateOnly.FromDateTime(request.CompletionDate.Date);
+
             habit.Complete(
-                DateOnly.FromDateTime(request.CompletionDate.Date),
+                completionDate,
                 request.CompletedValue,
                 request.Notes,
                 request.MoodLevel,
-                request.EnergyLevel
-            );
+                request.EnergyLevel);
 
+            // SaveChangesAsync dispatches domain events and populates the IDENTITY Id
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // Domain events (HabitCompletedEvent, StreakAchievedEvent) will be dispatched by Infrastructure
+            // After save, EF Core has populated the database-generated Id
+            var completionId = habit.Completions
+                .OrderByDescending(c => c.CreatedAt)
+                .First(c => c.CompletionDate == completionDate)
+                .Id;
 
             return Result.Success(new CompleteHabitResponse(
-                Guid.NewGuid(),
+                completionId,
                 habit.CurrentStreak,
-                10 // Default XP, will be refined by Gamification handler
-            ));
+                habit.XPPerCompletion));
         }
     }
 }

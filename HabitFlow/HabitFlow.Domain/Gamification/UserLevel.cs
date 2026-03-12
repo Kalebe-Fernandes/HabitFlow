@@ -7,9 +7,11 @@ namespace HabitFlow.Domain.Gamification
     public sealed class UserLevel : AggregateRoot<Guid>
     {
         private readonly List<UserBadge> _badges = [];
+
         public int CurrentLevel { get; private set; }
         public long TotalXP { get; private set; }
         public int CurrentBalance { get; private set; }
+
         public IReadOnlyCollection<UserBadge> Badges => _badges.AsReadOnly();
 
         private UserLevel() { }
@@ -27,7 +29,8 @@ namespace HabitFlow.Domain.Gamification
 
         public void AwardXP(int xpAmount, string reason, Guid? relatedEntityId = null)
         {
-            if (xpAmount <= 0) throw new ValidationException(nameof(xpAmount), "XP amount must be positive");
+            if (xpAmount <= 0)
+                throw new ValidationException(nameof(xpAmount), "XP amount must be positive");
 
             TotalXP += xpAmount;
             var newLevel = CalculateLevel(TotalXP);
@@ -44,7 +47,9 @@ namespace HabitFlow.Domain.Gamification
 
         public void AwardCurrency(int amount, string reason)
         {
-            if (amount <= 0) throw new ValidationException(nameof(amount), "Amount must be positive");
+            if (amount <= 0)
+                throw new ValidationException(nameof(amount), "Amount must be positive");
+
             CurrentBalance += amount;
             UpdatedAt = DateTime.UtcNow;
             AddDomainEvent(new CurrencyEarnedEvent(Id, amount, CurrentBalance, reason));
@@ -52,8 +57,12 @@ namespace HabitFlow.Domain.Gamification
 
         public void SpendCurrency(int amount, string reason)
         {
-            if (amount <= 0) throw new ValidationException(nameof(amount), "Amount must be positive");
-            if (CurrentBalance < amount) throw new DomainException("Insufficient balance", "INSUFFICIENT_BALANCE");
+            if (amount <= 0)
+                throw new ValidationException(nameof(amount), "Amount must be positive");
+
+            if (CurrentBalance < amount)
+                throw new DomainException("Insufficient balance", "INSUFFICIENT_BALANCE");
+
             CurrentBalance -= amount;
             UpdatedAt = DateTime.UtcNow;
         }
@@ -61,14 +70,14 @@ namespace HabitFlow.Domain.Gamification
         public void AwardBadge(int badgeId, string badgeName)
         {
             if (_badges.Any(b => b.BadgeId == badgeId)) return;
-            _badges.Add(new UserBadge { UserId = Id, BadgeId = badgeId, EarnedAt = DateTime.UtcNow });
+
+            _badges.Add(UserBadge.Create(Id, badgeId));
             UpdatedAt = DateTime.UtcNow;
             AddDomainEvent(new BadgeEarnedEvent(Id, badgeId, badgeName));
         }
 
         private static int CalculateLevel(long totalXP)
         {
-            // Formula: XP_Required(N) = 100 × N²
             var level = 1;
             while (CalculateXPForLevel(level + 1) <= totalXP) level++;
             return level;

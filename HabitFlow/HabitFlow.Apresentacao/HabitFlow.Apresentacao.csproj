@@ -58,16 +58,21 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.30" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.30" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.2" />
-        <PackageReference Include="MudBlazor" Version="8.15.0" />
-        <PackageReference Include="Refit" Version="9.0.2" />
+      <AndroidResource Remove="Services\**" />
+      <Compile Remove="Services\**" />
+      <Content Remove="Services\**" />
+      <EmbeddedResource Remove="Services\**" />
+      <MauiXaml Remove="Services\**" />
+      <None Remove="Services\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\" />
+        <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.50" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.50" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
+        <PackageReference Include="MudBlazor" Version="9.1.0" />
+        <PackageReference Include="Refit" Version="10.0.1" />
     </ItemGroup>
 
     <ItemGroup>

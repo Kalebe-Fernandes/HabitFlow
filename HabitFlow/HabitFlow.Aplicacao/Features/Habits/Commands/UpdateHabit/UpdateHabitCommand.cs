@@ -10,4 +10,5 @@ namespace HabitFlow.Aplicacao.Features.Habits.Commands.UpdateHabit
     string? IconName,
     string? ColorHex) : ICommand;
 
+    public record UpdateHabitRequest(string Name, string? Description, string? IconName, string? ColorHex);
 }

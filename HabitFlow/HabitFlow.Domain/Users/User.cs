@@ -8,6 +8,7 @@ namespace HabitFlow.Domain.Users
     {
         private const int MaxEmailLength = 255;
         private const int MaxNameLength = 100;
+
         public string Email { get; private set; } = string.Empty;
         public string PasswordHash { get; private set; } = string.Empty;
         public string FirstName { get; private set; } = string.Empty;
@@ -18,7 +19,9 @@ namespace HabitFlow.Domain.Users
         public UserSettings Settings { get; private set; } = null!;
         public bool IsEmailVerified { get; private set; }
         public bool IsActive { get; private set; }
+
         private User() { }
+
         private User(string email, string passwordHash, string firstName, string lastName, string displayName)
         {
             Id = Guid.NewGuid();
@@ -31,44 +34,81 @@ namespace HabitFlow.Domain.Users
             Settings = UserSettings.CreateDefault();
             IsEmailVerified = false;
             IsActive = true;
+
             AddDomainEvent(new UserRegisteredEvent(Id, email, displayName));
         }
-        public static User Create(string email, string passwordHash, string firstName, string lastName, string? displayName = null)
+
+        public static User Create(
+            string email,
+            string passwordHash,
+            string firstName,
+            string lastName,
+            string? displayName = null)
         {
             ValidateInputs(email, passwordHash, firstName, lastName);
-            var finalDisplayName = string.IsNullOrWhiteSpace(displayName) ? $"{firstName} {lastName}".Trim() : displayName.Trim();
-            return new User(email.Trim().ToLowerInvariant(), passwordHash, firstName.Trim(), lastName.Trim(), finalDisplayName);
+
+            var finalDisplayName = string.IsNullOrWhiteSpace(displayName)
+                ? $"{firstName} {lastName}".Trim()
+                : displayName.Trim();
+
+            return new User(
+                email.Trim().ToLowerInvariant(),
+                passwordHash,
+                firstName.Trim(),
+                lastName.Trim(),
+                finalDisplayName);
         }
+
         public void UpdateProfile(string firstName, string lastName, string displayName)
         {
-            if (string.IsNullOrWhiteSpace(firstName)) throw new ValidationException(nameof(firstName), "First name is required");
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new ValidationException(nameof(firstName), "First name is required");
+
             FirstName = firstName.Trim();
             LastName = lastName.Trim();
             DisplayName = displayName.Trim();
             UpdatedAt = DateTime.UtcNow;
+
             AddDomainEvent(new UserProfileUpdatedEvent(Id, DisplayName));
         }
+
         public void UpdatePassword(string newPasswordHash)
         {
+            if (string.IsNullOrWhiteSpace(newPasswordHash))
+                throw new ValidationException(nameof(newPasswordHash), "Password hash is required");
+
             PasswordHash = newPasswordHash;
             UpdatedAt = DateTime.UtcNow;
         }
+
         public void VerifyEmail()
         {
             IsEmailVerified = true;
             UpdatedAt = DateTime.UtcNow;
         }
+
         private static void ValidateInputs(string email, string passwordHash, string firstName, string lastName)
         {
-            if (string.IsNullOrWhiteSpace(email)) throw new ValidationException(nameof(email), "Email is required");
-            if (string.IsNullOrWhiteSpace(firstName)) throw new ValidationException(nameof(firstName), "First name is required");
-            if (string.IsNullOrWhiteSpace(lastName)) throw new ValidationException(nameof(lastName), "Last name is required");
-            if (!VerifyPassword(passwordHash)) throw new ValidationException(nameof(firstName), "Password is not satisfied");
-        }
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ValidationException(nameof(email), "Email is required");
 
-        public static bool VerifyPassword(string password)
-        {
-            return password != null && password.Length > 8 && password.Length < 100;
+            if (email.Length > MaxEmailLength)
+                throw new ValidationException(nameof(email), $"Email cannot exceed {MaxEmailLength} characters");
+
+            if (string.IsNullOrWhiteSpace(passwordHash))
+                throw new ValidationException(nameof(passwordHash), "Password hash is required");
+
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new ValidationException(nameof(firstName), "First name is required");
+
+            if (firstName.Length > MaxNameLength)
+                throw new ValidationException(nameof(firstName), $"First name cannot exceed {MaxNameLength} characters");
+
+            if (string.IsNullOrWhiteSpace(lastName))
+                throw new ValidationException(nameof(lastName), "Last name is required");
+
+            if (lastName.Length > MaxNameLength)
+                throw new ValidationException(nameof(lastName), $"Last name cannot exceed {MaxNameLength} characters");
         }
     }
 }

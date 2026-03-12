@@ -26,9 +26,9 @@ namespace HabitFlow.Infrastructure.Repositories
         public async Task<List<HabitCompletion>> GetCompletionsAsync(Guid habitId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken = default)
         {
             return await _context.HabitCompletions
-                .Where(hc => hc.HabitId == habitId &&
-                            hc.CompletionDate >= DateOnly.FromDateTime(startDate) &&
-                            hc.CompletionDate <= DateOnly.FromDateTime(endDate))
+                .Where(hc => hc.HabitId == habitId
+                    && hc.CompletionDate >= DateOnly.FromDateTime(startDate)
+                    && hc.CompletionDate <= DateOnly.FromDateTime(endDate))
                 .OrderBy(hc => hc.CompletionDate)
                 .ToListAsync(cancellationToken);
         }
@@ -50,25 +50,47 @@ namespace HabitFlow.Infrastructure.Repositories
 
         public async Task<IEnumerable<Habit>> GetActiveByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var habits = await GetUserHabitsAsync(userId, cancellationToken);
-            habits = [.. habits.Where(h => h.Status == HabitStatus.Active)];
-            return habits;
+            return await _context.Habits
+                .Where(h => h.UserId == userId && h.Status == HabitStatus.Active)
+                .OrderBy(h => h.CreatedAt)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<(IEnumerable<Habit> Habits, int TotalCount)> GetPagedByUserIdAsync(Guid userId, int page, int pageSize, CancellationToken cancellationToken = default)
         {
-            var habits = await GetUserHabitsAsync(userId, cancellationToken);
-            return (habits, habits.Count);
+            var query = _context.Habits
+                .Where(h => h.UserId == userId && h.Status == HabitStatus.Active)
+                .OrderBy(h => h.CreatedAt);
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            var habits = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return (habits, totalCount);
         }
 
         public async Task<Habit?> GetByIdWithCompletionsAsync(Guid habitId, CancellationToken cancellationToken = default)
         {
-            return await _context.Habits.Where(h => h.Id == habitId).Include(h => h.Completions).FirstOrDefaultAsync(cancellationToken);
+            return await _context.Habits
+                .Where(h => h.Id == habitId)
+                .Include(h => h.Completions)
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         public async Task<bool> ExistsWithNameAsync(Guid userId, string name, Guid? excludeHabitId = null, CancellationToken cancellationToken = default)
         {
-            return await _context.Habits.FirstOrDefaultAsync(h => h.Name == name, cancellationToken: cancellationToken) != null;
+            var query = _context.Habits
+                .Where(h => h.UserId == userId
+                    && h.Name == name
+                    && h.Status != HabitStatus.Archived);
+
+            if (excludeHabitId.HasValue)
+                query = query.Where(h => h.Id != excludeHabitId.Value);
+
+            return await query.AnyAsync(cancellationToken);
         }
     }
 }

@@ -6,8 +6,9 @@ using Microsoft.Extensions.Logging;
 namespace HabitFlow.Infrastructure.EventHandlers
 {
     /// <summary>
-    /// Handler para evento de conclusão de hábito.
-    /// Concede XP ao usuário quando um hábito é completado.
+    /// Awards XP to the user when a habit completion event is raised.
+    /// The XP amount is taken from the event (HabitCompletedEvent.XpAwarded),
+    /// which reflects the per-completion value configured in the habit aggregate.
     /// </summary>
     public sealed class HabitCompletedEventHandler(IMediator mediator, ILogger<HabitCompletedEventHandler> logger) : INotificationHandler<HabitCompletedEvent>
     {
@@ -17,30 +18,26 @@ namespace HabitFlow.Infrastructure.EventHandlers
         public async Task Handle(HabitCompletedEvent notification, CancellationToken cancellationToken)
         {
             _logger.LogInformation(
-                "Processando HabitCompletedEvent: HabitId={HabitId}, UserId={UserId}",
+                "Processing HabitCompletedEvent: HabitId={HabitId}, UserId={UserId}, XP={XP}",
                 notification.HabitId,
-                notification.UserId);
-
-            // Concede XP padrão por conclusão
-            var command = new AwardXPCommand(
                 notification.UserId,
-                10, // XP padrão - TODO: Buscar XP configurado no hábito
-                $"Habit completed: {notification.HabitId}",
-                notification.HabitId);
+                notification.XpAwarded);
 
+            var command = new AwardXPCommand(notification.UserId, notification.XpAwarded, $"Habit completed: {notification.HabitId}", notification.HabitId);
             var result = await _mediator.Send(command, cancellationToken);
-
             if (result.IsFailure)
             {
                 _logger.LogWarning(
-                    "Falha ao conceder XP: {Error}",
+                    "Failed to award XP for habit completion: UserId={UserId}, Error={Error}",
+                    notification.UserId,
                     result.Error);
             }
             else
             {
                 _logger.LogInformation(
-                    "XP concedido: UserId={UserId}, Amount=10, TotalXP={TotalXP}, LeveledUp={LeveledUp}",
+                    "XP awarded: UserId={UserId}, Amount={Amount}, TotalXP={TotalXP}, LeveledUp={LeveledUp}",
                     notification.UserId,
+                    notification.XpAwarded,
                     result.Value.TotalXP,
                     result.Value.LeveledUp);
             }

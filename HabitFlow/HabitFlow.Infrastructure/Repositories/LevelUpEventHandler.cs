@@ -3,12 +3,12 @@ using HabitFlow.Infrastructure.Services.Notifications;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace HabitFlow.Infrastructure.EventHandlers
+namespace HabitFlow.Infrastructure.Repositories
 {
     /// <summary>
-    /// Handles LevelUpEvent by sending push notification.
+    /// Handles LevelUpEvent by sending a push notification to the user.
     /// </summary>
-    public sealed class LevelUpEventHandler(INotificationService notificationService,ILogger<LevelUpEventHandler> logger) : INotificationHandler<LevelUpEvent>
+    public sealed class LevelUpEventHandler(INotificationService notificationService, ILogger<LevelUpEventHandler> logger) : INotificationHandler<LevelUpEvent>
     {
         private readonly INotificationService _notificationService = notificationService;
         private readonly ILogger<LevelUpEventHandler> _logger = logger;
@@ -20,13 +20,10 @@ namespace HabitFlow.Infrastructure.EventHandlers
                 notification.UserId,
                 notification.NewLevel);
 
-            await _notificationService.SendPushNotificationAsync(
+            await _notificationService.SendAchievementNotificationAsync(
                 notification.UserId,
-                "Parabéns! 🎉",
-                $"Você alcançou o nível {notification.NewLevel}!",
+                $"Level {notification.NewLevel} reached",
                 cancellationToken);
-
-            await Task.CompletedTask;
         }
     }
 }
