@@ -3,6 +3,7 @@ using HabitFlow.Aplicacao.Features.Habits.Commands.CompleteHabit;
 using HabitFlow.Aplicacao.Features.Habits.Commands.CreateHabit;
 using HabitFlow.Aplicacao.Features.Users.Commands.Login;
 using HabitFlow.Aplicacao.Features.Users.Commands.Register;
+using HabitFlow.IntegrationTests.Infrastructure;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -30,9 +31,7 @@ namespace HabitFlow.IntegrationTests.Controllers
             _factory.Dispose();
         }
 
-        private static CreateHabitRequest DailyBinaryRequest() =>
-            new("Meditar", "Meditacao diaria", "meditation", "#4CAF50",
-                "Daily", "Binary", null, null, null, null, null, null);
+        private static CreateHabitRequest DailyBinaryRequest() => new("Meditar", "Meditacao diaria", "meditation", "#4CAF50", "Daily", "Binary", null, null, null, null, null, null);
 
         // ── Authorization guard ───────────────────────────────────────────────────
 
@@ -40,7 +39,6 @@ namespace HabitFlow.IntegrationTests.Controllers
         public async Task GetHabits_WithoutToken_Returns401()
         {
             var response = await _client.GetAsync("/api/habits");
-
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
@@ -48,7 +46,6 @@ namespace HabitFlow.IntegrationTests.Controllers
         public async Task CreateHabit_WithoutToken_Returns401()
         {
             var response = await _client.PostAsJsonAsync("/api/habits", DailyBinaryRequest());
-
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
@@ -60,7 +57,6 @@ namespace HabitFlow.IntegrationTests.Controllers
             await AuthenticateAsync();
 
             var response = await _client.PostAsJsonAsync("/api/habits", DailyBinaryRequest());
-
             response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
 
@@ -81,11 +77,7 @@ namespace HabitFlow.IntegrationTests.Controllers
         {
             await AuthenticateAsync();
 
-            var request = new CreateHabitRequest(
-                "Correr", null, "run", "#FF5722",
-                "Weekly", "Numeric", 30m, "minutos",
-                42, null, null, null);
-
+            var request = new CreateHabitRequest("Correr", null, "run", "#FF5722", "Weekly", "Numeric", 30m, "minutos", 42, null, null, null);
             var response = await _client.PostAsJsonAsync("/api/habits", request);
 
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -96,10 +88,7 @@ namespace HabitFlow.IntegrationTests.Controllers
         {
             await AuthenticateAsync();
 
-            var request = new CreateHabitRequest(
-                "", null, "meditation", "#4CAF50",
-                "Daily", "Binary", null, null, null, null, null, null);
-
+            var request = new CreateHabitRequest("", null, "meditation", "#4CAF50", "Daily", "Binary", null, null, null, null, null, null);
             var response = await _client.PostAsJsonAsync("/api/habits", request);
 
             response.IsSuccessStatusCode.Should().BeFalse();
@@ -140,8 +129,7 @@ namespace HabitFlow.IntegrationTests.Controllers
             var habitId = await CreateHabitAsync();
 
             var request = new CompleteHabitRequest(DateTime.UtcNow, null, null, null, null);
-            var response = await _client.PostAsJsonAsync(
-                $"/api/habits/{habitId}/complete", request);
+            var response = await _client.PostAsJsonAsync($"/api/habits/{habitId}/complete", request);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var body = await response.Content.ReadFromJsonAsync<JsonElement>();
@@ -168,8 +156,7 @@ namespace HabitFlow.IntegrationTests.Controllers
             await AuthenticateAsync();
 
             var request = new CompleteHabitRequest(DateTime.UtcNow, null, null, null, null);
-            var response = await _client.PostAsJsonAsync(
-                $"/api/habits/{Guid.NewGuid()}/complete", request);
+            var response = await _client.PostAsJsonAsync($"/api/habits/{Guid.NewGuid()}/complete", request);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
@@ -195,7 +182,6 @@ namespace HabitFlow.IntegrationTests.Controllers
 
             var request = new { Name = "Qualquer", Description = (string?)null, IconName = "icon", ColorHex = "#000000" };
             var response = await _client.PutAsJsonAsync($"/api/habits/{Guid.NewGuid()}", request);
-
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
@@ -208,7 +194,6 @@ namespace HabitFlow.IntegrationTests.Controllers
             var habitId = await CreateHabitAsync();
 
             var response = await _client.GetAsync($"/api/habits/{habitId}/statistics");
-
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
@@ -218,7 +203,6 @@ namespace HabitFlow.IntegrationTests.Controllers
             await AuthenticateAsync();
 
             var response = await _client.GetAsync($"/api/habits/{Guid.NewGuid()}/statistics");
-
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
@@ -229,17 +213,13 @@ namespace HabitFlow.IntegrationTests.Controllers
             var email = $"habits_{Guid.NewGuid():N}@ex.com";
             const string password = "Senha@1234";
 
-            await _client.PostAsJsonAsync("/api/users/register",
-                new RegisterUserCommand(email, password, "Joao", "Silva"));
+            await _client.PostAsJsonAsync("/api/users/register", new RegisterUserCommand(email, password, "Joao", "Silva"));
 
-            var loginResponse = await _client.PostAsJsonAsync("/api/users/login",
-                new LoginCommand(email, password));
-
+            var loginResponse = await _client.PostAsJsonAsync("/api/users/login", new LoginCommand(email, password));
             var body = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
             var token = body.GetProperty("accessToken").GetString()!;
 
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
         private async Task<Guid> CreateHabitAsync()
