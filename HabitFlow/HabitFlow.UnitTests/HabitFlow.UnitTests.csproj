@@ -40,10 +40,4 @@
     <ProjectReference Include="..\HabitFlow.Infrastructure\HabitFlow.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ApplicationTests\Features\Users - Cópia %283%29\" />
-    <Folder Include="ApplicationTests\Features\Users - Cópia %284%29\" />
-    <Folder Include="Domain\Users - Cópia %285%29\" />
-  </ItemGroup>
-
 </Project>
